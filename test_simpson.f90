@@ -7,7 +7,7 @@ program simpson_test
       do i=1,100
         x(i) = dfloat(i)/100
         y(i) = x(i)
-        !write(*, *) i, x(i), y(i)
+!        write(*, '(i, 2f10.3)') i, x(i), y(i)
       end do
 
       sum = simpson(x,y,100)
