@@ -1,6 +1,11 @@
-real*8 function simpson(x,y,n)
-      implicit real*8 (a-h, o-z)
-      dimension :: x(n), y(n)
+function simpson(x,y,n)
+      implicit none
+      integer, parameter :: dp = selected_real_kind(14)
+      integer, intent(in) :: n
+      integer :: i
+      real(kind=dp) :: simpson
+      real(kind=dp), dimension(n), intent(in) :: x, y
+      real(kind=dp) :: sum, h
 
       sum = 0.0d0
       h = dabs(x(n) - x(1))/dfloat(n-1)
