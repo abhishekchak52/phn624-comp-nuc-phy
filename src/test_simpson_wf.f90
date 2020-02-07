@@ -4,6 +4,7 @@ program simpson_test_wf
       integer :: i
       real(kind=dp), dimension(n) :: x, y
       real(kind=dp) :: sum, high, low, dx, x_sq
+      real(kind=dp), parameter :: pi = real(4, kind=dp)*atan(real(1, kind=dp))
 
       interface
         function simpson(x,y,n)
@@ -17,16 +18,16 @@ program simpson_test_wf
 
       
       sum=0.0d0
-      high = 4.0d0; low = -high;
+      high = 5.0d0; low = -high;
       dx = (high - low)/(n-1)
       do i=1, n
         x(i) = low + dfloat(i)*dx
         x_sq = x(i)*x(i)
-        y(i) = (x_sq - 1.0d0)*exp(-0.5d0*x_sq)
-        write(*, '(i, 2f10.3)') i, x(i), y(i)
+        y(i) = (x_sq - 1.0d0)*exp(-x_sq)
+        !write(*, '(i, 2f10.3)') i, x(i), y(i)
       end do
 
       sum = simpson(x,y,n)
-      write(*,*) sum, dsqrt(3.14d0)/2.0d0
+      write(*,*) sum, sqrt(pi)/-2.0d0
 
 end program simpson_test_wf
