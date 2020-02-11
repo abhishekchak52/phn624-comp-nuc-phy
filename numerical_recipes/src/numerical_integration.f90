@@ -19,6 +19,8 @@ contains
                 end do
                 simpson = sum*h/3.0d0
         end function simpson
+        
+        subroutine rk4(
 end module numerical_integration
       
       
