@@ -1,6 +1,7 @@
 module numerical_integration
         implicit none
         ! Contains procedures for numerical integration
+        ! From Numerical Recipes in FORTRAN
 
 contains
         function simpson(x,y,n)
