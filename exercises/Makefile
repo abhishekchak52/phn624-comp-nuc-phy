@@ -10,6 +10,6 @@ rfsc:
 
 rfsc_plot: rfsc
 	./rfsc_cart.sh
-	gnuplot -e "unset key;set xrange [-100:100];set yrange [-200:200];pl for [i=3:*:2] 'rfsc_cart.txt' u (column(i-1)):i w l; pause -1"
+	gnuplot rfsc_cart.gp
 	
 	
