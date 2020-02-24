@@ -2,35 +2,36 @@ program swe_inf_pot_well
       use numerical_integration
       implicit none
 
-      integer, parameter :: n_pts = 1000, n_energy = 40, max_iter_bisec = 50
+      integer, parameter :: n_pts = 10000, n_energy = 40, max_iter_bisec = 100
       real(kind=dp) :: x(n_pts), psi(n_pts,2) ! Contains psi and psi-dot
       real(kind=dp) :: E, E_high, E_low, xmax, xmin, dx, E_list(n_energy)
-      real(kind=dp), allocatable :: E_levels(:), wf_list(:,:)
+      real(kind=dp) :: E_levels(5), wf_list(5,n_pts)
       integer :: i, j, n_zero_low, n_zero_high, n_zero_mid, n_evals
-      
-      xmax = 10
-      xmin = -10
+      ! length and energy scales (fm and MeV)
+      real(kind=dp), parameter :: l0 = 0.14871085d0, E0 = 938.27208816d0
+      xmax = 12.0d0/l0
+      xmin = -12.0d0/l0
       dx = (xmax-xmin)/(n_pts-1)
       x(1) = xmin
       psi(1,:) = [0.0d0, 0.01d0]
-      E_list = [(i*0.025d0, i=1,n_energy)]
+      E_list = [(i*0.001d0, i=0,n_energy-1)]
 
       ! Count energy levels
-      E = E_list(n_energy)
-      call rk4(x, psi, dx, n_pts, 2, swe_deriv)
-      n_evals = n_zeros(psi, n_pts)
+!      E = E_list(n_energy)
+!      call rk4(x, psi, dx, n_pts, 2, swe_deriv)
+!      n_evals = n_zeros(psi, n_pts)
 
-      allocate(E_levels(n_evals))
-      allocate(wf_list(n_evals, n_pts))
 !      write(*,*) E_list
+      n_evals = 1
       do i=1,n_energy
+              if (n_evals > 5) exit;
               E_low = E_list(i); E_high = E_list(i+1);
 
               E = E_low
               call rk4(x, psi, dx, n_pts, 2, swe_deriv)
               n_zero_low = n_zeros(psi, n_pts)
 
-!              write(*,*) E_low, n_zero_low
+!              writ(*,*) E_low, n_zero_low
               E = E_high
               call rk4(x, psi, dx, n_pts, 2, swe_deriv)
               n_zero_high = n_zeros(psi, n_pts)
@@ -47,18 +48,22 @@ program swe_inf_pot_well
                                 E_low = E
                         end if 
                       end do
-                      E_levels(i) = E
-                      wf_list(i,:) = psi(:,1)
-!                      write(*, *) E*938.272
+!                      E_levels(i) = E
+                      wf_list(n_evals, :) = psi(:,1)
+!                      write(*, *) E
+                      E_levels(n_evals) = E
+                      n_evals = n_evals + 1
               end if
               !do i=1,n_pts
               !        write(*,*) x(i), psi(i,1), psi(i,2)
               !end do  
       end do
       write (*,*) E_levels
-!      do i=1, n_pts
-!        write(*,*) x(i), wf_list(:, i)
-!      end do
+      open(unit=25, file='wf_data.txt')
+      write(25, "(A,T12,5f11.4)") 'x(t)', E_levels*E0
+      do i=1, n_pts
+        write(25,"(6f11.4)") x(i), wf_list(:, i)
+      end do
 !      write(*,*) n_zeros(psi, n_pts)
 contains
 
@@ -84,9 +89,21 @@ contains
               real(kind=dp), intent(in)  :: x, psi(2)
               real(kind=dp), dimension(2), intent(out) :: dpsidx
 
-              pot  = 0
+              ! Infinite Well
+              !pot = 0.0d0
+
+              ! Finite Well
+              if (abs(x) > 10.0d0/l0) then
+                      pot = 25.0d0/E0
+              else
+                      pot = 0.0d0
+              end if
+!
+              ! Woods-Saxon(Correct factors not yet calculated)
+              !pot = 25.0d0/E0*(1-1.0d0/(1+exp((abs(x)-5.0d0/l0)/0.5d0/l0)))
+
               dpsidx(1) = psi(2)
-              dpsidx(2) = -(E-pot)*psi(1)
+              dpsidx(2) = -1*(E-pot)*psi(1)
 
         end subroutine swe_deriv
 
