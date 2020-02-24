@@ -9,7 +9,7 @@ rfsc:
 	ifort -o test_rfsc numerical_integration.f90 rfscat_cart.f90
 
 rfsc_plot: rfsc
-	echo 2 2 79 118 50.0 |./test_rfsc > rfsc_cart.txt
-	gnuplot -e "pl 'rfsc_cart.txt' u 2:3 w l; pause -1"
+	./rfsc_cart.sh
+	gnuplot -e "unset key;set xrange [-100:100];set yrange [-200:200];pl for [i=3:*:2] 'rfsc_cart.txt' u (column(i-1)):i w l; pause -1"
 	
 	

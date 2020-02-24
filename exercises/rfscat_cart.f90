@@ -23,7 +23,7 @@ program rutherford_scattering
       call rk4(t_list, z, dt, n_pts, 4, rf_scattering_deriv)
 
       do i=1, n_pts
-        write(*, "(3(f10.5,3X))") t_list(i), z(i,1), z(i,3)
+        write(*, "(3f14.5)") t_list(i), z(i,1), z(i,3)
       end do
 
 
