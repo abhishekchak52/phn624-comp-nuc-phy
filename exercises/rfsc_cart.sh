@@ -16,4 +16,3 @@ do
 #	echo $b
 done
 rm temp.txt
-

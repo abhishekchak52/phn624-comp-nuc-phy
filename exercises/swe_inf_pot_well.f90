@@ -3,12 +3,12 @@ program swe_inf_pot_well
       implicit none
 
       integer, parameter :: n_pts = 10000, n_energy = 40, max_iter_bisec = 100
+      real(kind=dp), parameter :: l0 = 0.14871085d0, E0 = 938.27208816d0
       real(kind=dp) :: x(n_pts), psi(n_pts,2) ! Contains psi and psi-dot
       real(kind=dp) :: E, E_high, E_low, xmax, xmin, dx, E_list(n_energy)
-      real(kind=dp) :: E_levels(5), wf_list(5,n_pts)
+      real(kind=dp) :: E_levels(5), wf_list(5,n_pts), wf_norm
       integer :: i, j, n_zero_low, n_zero_high, n_zero_mid, n_evals
       ! length and energy scales (fm and MeV)
-      real(kind=dp), parameter :: l0 = 0.14871085d0, E0 = 938.27208816d0
       xmax = 12.0d0/l0
       xmin = -12.0d0/l0
       dx = (xmax-xmin)/(n_pts-1)
@@ -58,11 +58,20 @@ program swe_inf_pot_well
               !        write(*,*) x(i), psi(i,1), psi(i,2)
               !end do  
       end do
-      write (*,*) E_levels
+      write (*,*) E_levels*E0
+      ! Normalize the wavefunctions
+      do i=1, 5
+         wf_norm = 0.0d0
+         do j=1,n_pts
+            wf_norm = wf_norm + wf_list(i, j)*wf_list(i, j)*dx
+         end do
+         wf_list(i, :) = wf_list(i, :)/sqrt(wf_norm)
+      end do
+
       open(unit=25, file='wf_data.txt')
       write(25, "(A,T12,5f11.4)") 'x(t)', E_levels*E0
       do i=1, n_pts
-        write(25,"(6f11.4)") x(i), wf_list(:, i)
+        write(25,"(6f11.4)") x(i)*l0, wf_list(:, i)
       end do
 !      write(*,*) n_zeros(psi, n_pts)
 contains
@@ -90,17 +99,17 @@ contains
               real(kind=dp), dimension(2), intent(out) :: dpsidx
 
               ! Infinite Well
-              !pot = 0.0d0
+              ! pot = 0.0d0
 
               ! Finite Well
-              if (abs(x) > 10.0d0/l0) then
-                      pot = 25.0d0/E0
-              else
-                      pot = 0.0d0
-              end if
-!
+              ! if (abs(x) > 10.0d0/l0) then
+              !         pot = 25.0d0/E0
+              ! else
+              !         pot = 0.0d0
+              ! end if
+
               ! Woods-Saxon(Correct factors not yet calculated)
-              !pot = 25.0d0/E0*(1-1.0d0/(1+exp((abs(x)-5.0d0/l0)/0.5d0/l0)))
+              pot = 25.0d0*(1.0d0-1.0d0/(1.0d0+exp(abs(2*l0*x)-10)))/E0
 
               dpsidx(1) = psi(2)
               dpsidx(2) = -1*(E-pot)*psi(1)
