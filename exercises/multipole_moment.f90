@@ -4,7 +4,7 @@ program multipole_moment
   use numerical_integration
   integer, parameter :: num_theta_pts = 101, num_phi_pts = 101, num_r_pts = 101, lmax=4
   real(kind=dp) :: alp(num_theta_pts, 0:lmax,-lmax:lmax), theta_pts(num_theta_pts), dtheta, dphi
-  real(kind=dp) :: fac, phi, r_pts(num_r_pts), rho(num_r_pts), r_cutoff, dr, phi_pts(num_phi_pts)
+  real(kind=dp) :: fac, phi, r_pts(num_r_pts), rho_pts(num_r_pts), r_cutoff, dr, phi_pts(num_phi_pts)
   real(kind=dp) :: re_integral, im_integ, re_phi_integ(num_r_pts, num_theta_pts), re_theta_integ(num_r_pts)
   integer :: i, j, k, l, m, fact(2*lmax)
   complex(kind=dp) :: spha_ylm(num_theta_pts, num_phi_pts), integrand(num_r_pts, num_theta_pts, num_phi_pts)
@@ -35,7 +35,7 @@ program multipole_moment
   do i=1,num_r_pts
      do j=1,num_theta_pts
         do k=1,num_phi_pts
-            integrand(i, j, k) = r_pts(i)**(l+2)*conjg(spha_ylm(j,k))*rho(i)*sin(theta_pts(j))*dr*dtheta*dphi
+            integrand(i, j, k) = r_pts(i)**(l+2)*conjg(spha_ylm(j,k))*rho_pts(i)*sin(theta_pts(j))*dr*dtheta*dphi
         end do
      end do
   end do
