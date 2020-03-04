@@ -24,5 +24,24 @@ howf:
 
 howf_plot: howf
 	./howf_test
-	@gnuplot -p -e "pl for [col=2:*] 'howf_data.txt' u 1:col w l lw 3"
+	@gnuplot -p -e "pl for [col=2:10] 'howf_data.txt' u 1:col w l lw 3"
 	@gnuplot -p -e "pl 'ham_data.txt' matrix w image"
+
+alpa:
+	${fort_comp} -o alpt special_functions.f90 assoc_leg_pol_test.f90
+
+test_alpa: alpa
+	./alpt > alpt_data.txt
+	gnuplot -p -e "pl for [col=2:6] 'alpt_data.txt' u 1:col w l lw 3 "
+
+spha:
+	${fort_comp} -o spharmonics special_functions.f90 spherical_harmonics.f90
+
+plot_spha: spha
+	./spharmonics > spha_data.txt
+	# gnuplot -p -e "set mapping spherical; spl 'spha_data.txt' u 2:1:3 w l"
+	# gnuplot -p -e "set mapping spherical; spl 'spha_data.txt' u 2:1:4 w l"
+	gnuplot -e "set mapping spherical; spl 'spha_data.txt' u 2:1:5; pause -1"
+
+multipole_mom:
+	${fort_comp} -o mul_mom numerical_constants.f90 special_functions.f90 numerical_integration.f90 multipole_moment.f90

@@ -1,9 +1,8 @@
 module numerical_integration
+        use numerical_constants
         implicit none
         ! Contains procedures for numerical integration
         ! From Numerical Recipes in FORTRAN
-        integer, parameter :: dp = selected_real_kind(14)
-        real(kind=dp), parameter :: pi = real(4, kind=dp)*atan(real(1, kind=dp))
 
 contains
         function simpson(x,y,n)
