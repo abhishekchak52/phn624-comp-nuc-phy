@@ -45,7 +45,4 @@ contains
 
       end subroutine rf_scattering_deriv
       
-
-
-
 end program rutherford_scattering

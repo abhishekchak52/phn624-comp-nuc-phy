@@ -1,0 +1,13 @@
+ineut=40
+echo delta  N=40 > pes.out
+echo 40 $ineut | ./pes.exe >> pes.out
+ineut=44
+until [ $ineut -gt 61 ]; do
+  echo N=$ineut > t.out
+  echo 40 $ineut | ./nilsson.exe | awk '{print $2}' >> t.out
+  paste pes.out t.out > t1.out
+  mv t1.out pes.out
+  let ineut+=4
+done
+rm t.out 
+cat pes.out
